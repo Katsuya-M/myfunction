@@ -158,6 +158,8 @@ my_colour <- c("#577DC7", "#C74B43", "#9BBB59", "#A5A5A5", "#55A3C8")
 
 my_colour_palette <- colorRampPalette(c("#969696", RColorBrewer::brewer.pal(8, "Set1")))
 
+my_colour_palette2 <- colorRampPalette(c("#969696", "#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395"))
+
 
 # my_theme <- theme(
 #   legend.text = element_text(colour="black"),
