@@ -154,6 +154,18 @@ theme_my <- function (base_size = 25, base_family = "", base_line_size = .8,
           strip.background = element_rect(colour = "black", fill = NA))
 }
 
+theme_my2 <- function (base_size = 25, base_family = "", base_line_size = .8,
+                      base_rect_size = .8) {
+  theme_bw(base_size = base_size, base_family = base_family,
+           base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace%
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          axis.line = element_line(colour = "black", size = rel(1)),
+          axis.text = element_text(colour = "black"),
+          axis.ticks = element_line(colour = "black")
+    )
+}
+
 my_colour <- c("#577DC7", "#C74B43", "#9BBB59", "#A5A5A5", "#55A3C8")
 
 my_colour_palette <- colorRampPalette(c("#969696", RColorBrewer::brewer.pal(8, "Set1")))
