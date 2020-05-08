@@ -171,7 +171,8 @@ my_colour <- c("#577DC7", "#C74B43", "#9BBB59", "#A5A5A5", "#55A3C8")
 my_colour_palette <- colorRampPalette(c("#969696", RColorBrewer::brewer.pal(8, "Set1")))
 
 my_colour_palette2 <- colorRampPalette(c("#969696", "#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395"))
-my_colour_palette3 <- colorRampPalette(c("gray", "#265DAB", "#DF5C24", "#059748", "#E5126F", "#9D722A", "#7B3A96", "#C7B42E", "#CB2027"))
+
+my_colour_palette3 <- c("gray", "#265DAB", "#DF5C24", "#059748", "#E5126F", "#9D722A", "#7B3A96", "#C7B42E", "#CB2027")
 
 # my_theme <- theme(
 #   legend.text = element_text(colour="black"),
@@ -186,3 +187,16 @@ my_colour_palette3 <- colorRampPalette(c("gray", "#265DAB", "#DF5C24", "#059748"
 #   axis.ticks = element_line(colour = "black"),
 #   axis.line = element_line(linetype = "solid")
 # )
+
+combn_df <- function(df, ...) {
+  c(...) %>%
+    gtools::permutations(length(.), 2, v = ., repeats.allowed = TRUE) %>%
+    as.data.frame() %>%
+    mutate_if(is.factor, as.character) %>%
+    magrittr::set_colnames(c("name_x", "name_y")) %>%
+    as_tibble() %>%
+    right_join(df %>% pivot_longer(c(...), names_to = "name_x", values_to = "value_x"),
+               by = "name_x") %>%
+    left_join(df %>% pivot_longer(c(...), names_to = "name_y", values_to = "value_y"),
+              by = c("name_y", colnames(df)[!(colnames(df) %in% c(...))]))
+}
