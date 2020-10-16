@@ -11,6 +11,13 @@ se <- function(x) {
   }
 }
 
+sem <- function(x, na.rm = TRUE) {
+  if(na.rm) {
+    x <- x[!is.na(x)]
+  }
+  sd(x) / sqrt(length(x))
+}
+
 mean_bar <- function(x, mult = 1) {
   x <- stats::na.omit(x)
   mean <- mean(x)
