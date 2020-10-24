@@ -207,3 +207,49 @@ combn_df <- function(df, ...) {
     left_join(df %>% pivot_longer(c(...), names_to = "name_y", values_to = "value_y"),
               by = c("name_y", colnames(df)[!(colnames(df) %in% c(...))]))
 }
+
+ttest_mean_df <- function(dfl, mean = "mean", sem = "sem", n = "n", group = "group") {
+  data <- as.data.frame(dfl[, c(mean, sem, n, group)])
+  mu <- 0
+  conf.level <- 0.95
+  var_sem <- function(sem, n) {
+    sem ^ 2 * n
+  }
+  gx <- as.character(unique(data[[group]])[[1]])
+  gy <- as.character(unique(data[[group]])[[2]])
+  mx <- as.double(data[data[[group]] == gx, "mean"])
+  my <- as.double(data[data[[group]] == gy, "mean"])
+  sx <- as.double(data[data[[group]] == gx, "sem"])
+  sy <- as.double(data[data[[group]] == gy, "sem"])
+  nx <- as.double(data[data[[group]] == gx, "n"])
+  ny <- as.double(data[data[[group]] == gy, "n"])
+  vx <- var_sem(sx, nx)
+  vy <- var_sem(sy, ny)
+  method <- "Two Sample t-test"
+  estimate <- c(mx, my)
+  names(estimate) <- c("mean of x", "mean of y")
+  df <- nx + ny - 2
+  v <- 0
+  if (nx > 1)
+    v <- v + (nx - 1) * vx
+  if (ny > 1)
+    v <- v + (ny - 1) * vy
+  v <- v/df
+  stderr <- sqrt(v * (1/nx + 1/ny))
+  tstat <- (mx - my - mu)/stderr
+  pval <- 2 * pt(-abs(tstat), df)
+  alpha <- 1 - conf.level
+  cint <- qt(1 - alpha/2, df)
+  cint <- tstat + c(-cint, cint)
+  cint <- mu + cint * stderr
+  names(tstat) <- "t"
+  names(df) <- "df"
+  names(mu) <- "mean"
+  attr(cint, "conf.level") <- conf.level
+  rval <- list(statistic = tstat, parameter = df, p.value = pval,
+               conf.int = cint, estimate = estimate, null.value = mu,
+               alternative = "two.sided", method = method, data.name = paste(gx, "and", gy))
+  class(rval) <- "htest"
+  return(rval)
+}
+
